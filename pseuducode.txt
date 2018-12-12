@@ -1,0 +1,17 @@
+Display how to play connect four
+
+Prompt the user to choose whether to play against computer or player
+
+Player's turn:
+Prompt the user to input a column to place their piece in
+Validate the column choice
+
+Check if the player won
+
+if player won:
+    show player won message
+else:
+    if board is full:
+        game over
+    else:
+        next player's turn
