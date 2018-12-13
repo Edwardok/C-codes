@@ -1,3 +1,7 @@
+/*
+    Test file for the singly linked list data structure.
+    Lines that are commented indicate it results in an (expected) error. */
+
 #include "linkedlist.h"
 
 
@@ -10,23 +14,55 @@ int main()
     LinkedList list;
     linkedlist_init(&list);
     
+    printf("Expected: 1, Actual: %d\n", linkedlist_is_empty(&list));
+    
     //linkedlist_add_at(&list, 1, 100);
-    linkedlist_add_at(&list, 0, 100);
+    printf("Expected: 1, Actual: %d\n", linkedlist_add_at(&list, 0, 100));
     
-    linkedlist_add(&list, 1);
-    linkedlist_add(&list, 2);
-    linkedlist_add(&list, 3);
-    linkedlist_add(&list, 4);
-    linkedlist_add(&list, 5);
+    linkedlist_clear(&list);
+    printList(&list);
     
-    linkedlist_add_at(&list, 0, -1);
-    linkedlist_add_at(&list, 1, -2);
+    printf("Expected: 1, Actual: %d\n", linkedlist_add_at(&list, 0, 100));
+    
+    printf("Expected: 1, Actual: %d\n", linkedlist_add(&list, 1));
+    printf("Expected: 1, Actual: %d\n", linkedlist_add(&list, 2));
+    printf("Expected: 1, Actual: %d\n", linkedlist_add(&list, 3));
+    printf("Expected: 1, Actual: %d\n", linkedlist_add(&list, 4));
+    printf("Expected: 1, Actual: %d\n", linkedlist_add(&list, 5));
+    
+    printf("Expected: 1, Actual: %d\n", linkedlist_add_at(&list, 0, -1));
+    printf("Expected: 1, Actual: %d\n", linkedlist_add_at(&list, 1, -2));
     //linkedlist_add_at(&list, 9, 999);
     
-    linkedlist_add(&list, 20);
+    printf("Expected: 1, Actual: %d\n", linkedlist_add(&list, 2));
+    
+    printf("Expected: 0, Actual: %d\n", linkedlist_remove(&list, 0));
+    printf("Expected: 1, Actual: %d\n", linkedlist_remove(&list, -1));
+    printf("Expected: 1, Actual: %d\n", linkedlist_remove(&list, 2));
+    printf("Expected: 1, Actual: %d\n", linkedlist_remove(&list, 2));
+    
+    //linkedlist_remove_at(&list, 6);
+    printf("Expected: 5, Actual: %d\n", linkedlist_remove_at(&list, 5));
+    printf("Expected: -2, Actual: %d\n", linkedlist_remove_at(&list, 0));
+    
+    linkedlist_add(&list, 10);
+    
+    printf("Expected: 0, Actual: %d\n", linkedlist_is_empty(&list));
+    printf("Expected: 5, Actual: %d\n", linkedlist_size(&list));
+    
+    printf("Expected: 100, Actual: %d\n", linkedlist_get(&list, 0));
+    printf("Expected: 3, Actual: %d\n", linkedlist_get(&list, 2));
+    printf("Expected: 10, Actual: %d\n", linkedlist_get(&list, 4));
+    
+    printf("Expected: 100, Actual: %d\n", linkedlist_set(&list, 0, 1000));
+    printf("Expected: 3, Actual: %d\n", linkedlist_set(&list, 2, 30));
+    printf("Expected: 10, Actual: %d\n", linkedlist_set(&list, 4, 100));
+    
+    printf("Expected: 1, Actual: %d\n", linkedlist_contains(&list, 1));
+    printf("Expected: 0, Actual: %d\n", linkedlist_contains(&list, 25));
     
     printList(&list);
-    printExpected("-1 -2 100 1 2 3 4 5 20", 9);
+    printExpected("1000 1 30 4 100", 5);
     
     linkedlist_free(&list);
 }
