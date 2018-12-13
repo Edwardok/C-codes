@@ -95,7 +95,7 @@ bool linkedlist_add(LinkedList *list, element_t element)
     
     bool added = false;
     
-    Node *newNode = (Node *)malloc(sizeof(element_t));
+    Node *newNode = (Node *)malloc(sizeof(Node));
     
     if (newNode != NULL)
     {
@@ -156,7 +156,7 @@ bool linkedlist_add_at(LinkedList *list, size_t index, element_t element)
     
     bool added = false;
     
-    Node *newNode = (Node *)malloc(sizeof(element_t));
+    Node *newNode = (Node *)malloc(sizeof(Node));
     
     if (newNode != NULL)
     {
@@ -192,6 +192,254 @@ bool linkedlist_add_at(LinkedList *list, size_t index, element_t element)
 
 
 /*
+ * Removes the first occurrence of the specified element from the list,
+ * if it exists.
+ *
+ * params:
+ * list: the list to remove from
+ * element: the element to remove from the list
+ *
+ * returns:
+ * true if the specified element was contained in the list
+ */
+bool linkedlist_remove(LinkedList *list, element_t element)
+{
+    linkedlist_check_null(list, "linkedlist_remove");
+    
+    bool found = false;
+    
+    // if the list is not empty
+    if (list->head != NULL)
+    {
+        Node *removedNode;       // the node to remove
+        
+        // if the element is found in the first node of the list
+        if (list->head->data == element)
+        {
+            removedNode = list->head;
+            list->head = removedNode->next;
+            found = true;
+        }
+        else
+        {
+            Node *current = list->head;
+            
+            while (current->next != NULL && !found)
+            {
+                // if the element is found in the node after the current
+                if (current->next->data == element)
+                {
+                    removedNode = current->next;
+                    current->next = removedNode->next;
+                    found = true;       // exit the loop
+                }
+                else
+                {
+                    current = current->next;
+                }
+            }
+        }
+        
+        if (found)
+        {
+            free(removedNode);
+            list->size--;
+        }
+    }
+    
+    return found;
+}
+
+
+/*
+ * Removes the element at the specified index in the list.
+ *
+ * params:
+ * list: the list to remove an element from
+ * index: the index of the element to remove from the list
+ *
+ * returns:
+ * the element that was removed from the list
+ */
+element_t linkedlist_remove_at(LinkedList *list, size_t index)
+{
+    linkedlist_check_null(list, "linkedlist_remove_at");
+    linkedlist_check_index_bounds(list, index, "linkedlist_remove_at");
+    
+    element_t removedElement;
+    Node *removedNode;
+    
+    // remove the first node of the list
+    if (index == 0)
+    {
+        removedNode = list->head;
+        list->head = removedNode->next;
+    }
+    else
+    {
+        Node *current = list->head;
+        
+        size_t i;
+        for (i = 1; i < index; i++)
+        {
+            current = current->next;
+        }
+        
+        // current now points to the node before the one to be removed
+        removedNode = current->next;
+        current->next = removedNode->next;
+    }
+    
+    removedElement = removedNode->data;
+    
+    free(removedNode);
+    list->size--;
+    
+    return removedElement;
+}
+
+
+/*
+ * Get the element at the specified index of the list.
+ *
+ * params:
+ * list: the list to get an element from
+ * index: the index of the element in the list to get
+ *
+ * returns:
+ * the element at the specified index of the list
+ */
+element_t linkedlist_get(LinkedList *list, size_t index)
+{
+    linkedlist_check_null(list, "linkedlist_get");
+    linkedlist_check_index_bounds(list, index, "linkedlist_get");
+
+    Node *current = list->head;
+    
+    size_t i;
+    for (i = 0; i < index; i++)
+    {
+        current = current->next;
+    }
+    
+    return current->data;
+}
+
+
+/*
+ * Replace an element at the specified position of the list with
+ * the specified element.
+ *
+ * params:
+ * list: the list to replace an element in
+ * index: the index of the element to replace
+ * element: the new element
+ *
+ * returns:
+ * the element that got replaced
+ */
+element_t linkedlist_set(LinkedList *list, size_t index, element_t element)
+{
+    linkedlist_check_null(list, "linkedlist_set");
+    linkedlist_check_index_bounds(list, index, "linkedlist_set");
+    
+    element_t oldElement;
+    Node *current = list->head;
+    
+    size_t i;
+    for (i = 0; i < index; i++)
+    {
+        current = current->next;
+    }
+    
+    oldElement = current->data;     // get the previous element at index
+    current->data = element;        // replace with the new element
+    
+    return oldElement;
+}
+
+
+/*
+ * Determine if a specified element exists in the list
+ *
+ * params:
+ * list: the list to search an element for
+ * element: the element to search for in the list
+ *
+ * returns:
+ * true if the element is found in the list
+ */
+bool linkedlist_contains(LinkedList *list, element_t element)
+{
+    bool found = false;
+    
+    Node *current = list->head;
+    
+    while (current != NULL && !found)
+    {
+        if (current->data == element)
+        {
+            found = true;
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+    
+    return found;
+}
+
+
+/*
+ * Remove all the elements of the list.
+ *
+ * params:
+ * list: the list to empty
+ *
+ * returns: N/A
+ */
+void linkedlist_clear(LinkedList *list)
+{
+    linkedlist_free(list);
+}
+
+
+/*
+ * Determine if the list is empty.
+ *
+ * params:
+ * list: the list to check if it is empty
+ *
+ * returns:
+ * true if the list is empty
+ */
+bool linkedlist_is_empty(LinkedList *list)
+{
+    linkedlist_check_null(list, "linkedlist_size");
+    
+    return list->size == 0;
+}
+
+
+/*
+ * Get the size of the list.
+ *
+ * params:
+ * list: the list to get the size of
+ *
+ * returns:
+ * the number of elements in the list
+ */
+size_t linkedlist_size(LinkedList *list)
+{
+    linkedlist_check_null(list, "linkedlist_size");
+    
+    return list->size;
+}
+
+
+/*
  * Print all the elements in the linked list.
  *
  * params:
@@ -205,13 +453,21 @@ void linkedlist_print(LinkedList *list)
     
     Node *current = list->head;
     
+    printf("[");
     while (current != NULL)
     {
-        printf(FORMAT_SPECIFIER " ", current->data);
+        if (current == list->head)
+        {
+            printf(FORMAT_SPECIFIER, current->data);
+        }
+        else
+        {
+            printf(", " FORMAT_SPECIFIER, current->data);
+        }
+        
         current = current->next;
     }
-    
-    printf("\n");
+    printf("]\n");
 }
 
 
