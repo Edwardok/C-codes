@@ -6,6 +6,8 @@
 
 #define NULL_POINTER_ERROR 1            // program termination status
 #define INDEX_OUT_OF_BOUNDS_ERROR 2     // program termination status
+#define NO_SUCH_ELEMENT_ERROR 3         // program termination status
+#define ILLEGAL_STATE_ERROR 4           // program termination status
 
 
 /* Used to print the linked list elements of type element_t */
@@ -35,7 +37,19 @@ struct linkedlist
 };
 
 
-/* Function prototypes */
+/* Used to iterate through the list linearly */
+typedef struct listiterator ListIterator;
+
+struct listiterator
+{
+    LinkedList *list;
+    Node *previous;
+    Node *current;
+    Node *next;
+};
+
+
+/* Function prototypes (linkedlist.c) */
 void linkedlist_init(LinkedList *list);
 void linkedlist_free(LinkedList *list);
 bool linkedlist_add(LinkedList *list, element_t element);
@@ -49,3 +63,15 @@ void linkedlist_clear(LinkedList *list);
 bool linkedlist_is_empty(LinkedList *list);
 size_t linkedlist_size(LinkedList *list);
 void linkedlist_print(LinkedList *list);
+void linkedlist_check_null(LinkedList *list, char *functionName);
+void linkedlist_check_index_bounds(LinkedList *list,
+        size_t index, char *functionName);
+
+/* Function prototypes (listiterator.c) */
+void listiterator_init(ListIterator *iterator, LinkedList *list);
+bool listiterator_has_next(ListIterator *iterator);
+element_t listiterator_next(ListIterator *iterator);
+void listiterator_remove(ListIterator *iterator);
+void listiterator_check_null(ListIterator *iterator, char *functionName);
+void listiterator_check_has_next(ListIterator *iterator, char *functionName);
+void listiterator_check_state(ListIterator *iterator, char *functionName);
