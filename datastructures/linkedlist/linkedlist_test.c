@@ -64,6 +64,44 @@ int main()
     printList(&list);
     printExpected("1000 1 30 4 100", 5);
     
+    
+    
+    
+    
+    ListIterator iterator;
+    listiterator_init(&iterator, &list);
+    
+    while (listiterator_has_next(&iterator))
+    {
+        element_t element = listiterator_next(&iterator);
+        printf(FORMAT_SPECIFIER "\n", element);
+    }
+    printf("\n");
+    
+    
+    listiterator_init(&iterator, &list);
+    
+    while (listiterator_has_next(&iterator))
+    {
+        element_t element = listiterator_next(&iterator);
+        printf(FORMAT_SPECIFIER "\n", element);
+        
+        if (element == 100)
+        {
+            listiterator_remove(&iterator);
+            printf("removed\n");
+            //listiterator_remove(&iterator);
+        }
+    }
+    printf("\n");
+    
+    
+    
+    
+    
+    
+    printList(&list);
+    
     linkedlist_free(&list);
 }
 
