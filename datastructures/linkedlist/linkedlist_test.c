@@ -96,6 +96,31 @@ int main()
     printf("\n");
     
     
+    listiterator_init(&iterator, &list);
+    
+    listiterator_add(&iterator, -1);
+    //listiterator_set(&iterator, 0);
+    //listiterator_remove(&iterator);
+    
+    while (listiterator_has_next(&iterator))
+    {
+        element_t element = listiterator_next(&iterator);
+        printf(FORMAT_SPECIFIER "\n", element);
+        
+        if (element == 1000)
+        {
+            listiterator_remove(&iterator);
+            printList(&list);
+            listiterator_add(&iterator, 99);
+            listiterator_add(&iterator, 99);
+            printList(&list);
+            //listiterator_remove(&iterator);
+            printList(&list);
+        }
+    }
+    printf("\n");
+    
+    
     
     
     
