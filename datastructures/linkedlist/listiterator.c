@@ -1,10 +1,16 @@
 /*
     Iterator to iterate through a linked list in linear time, that is,
     calling next() is guaranteed to provide the next element in the list
-    in constant time.
+    in constant time. Only iterates forwards, not backwards.
+    
+    This iterator is made to resemble the Java ListIterator, excluding the
+    nextIndex(), previousIndex(), previous() and hasPrevious() methods.
     
     Any LinkedList or ListIterator parameters should not be NULL, otherwise
     the program will terminate prematurely.
+    
+    The iterator is considered to be in an illegal state if iterator->current
+    is a NULL pointer.
     
     
     Example usage:
@@ -76,8 +82,7 @@ element_t listiterator_next(ListIterator *iterator)
 {
     listiterator_check_has_next(iterator, "listiterator_next");
     
-    // if current is NULL, it was removed or listiterator_next()
-    // hasn't been called yet since initialization of the iterator
+    // if not in illegal state, make sure iterator->previous is not changed
     if (iterator->current != NULL)
     {
         iterator->previous = iterator->current;
@@ -91,9 +96,63 @@ element_t listiterator_next(ListIterator *iterator)
 
 
 /*
+ * Insert an element into the list in the position directly prior to the
+ * element that would be returned by listiterator_next().
+ *
+ * params:
+ * iterator: the iterator to add an element to
+ * element: the element to add to the list
+ *
+ * returns:
+ * true if the element was added
+ */
+bool listiterator_add(ListIterator *iterator, element_t element)
+{
+    listiterator_check_null(iterator, "listiterator_add");
+    
+    bool added = false;
+    
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    
+    if (newNode != NULL)
+    {
+        newNode->data = element;
+        newNode->next = iterator->next;     // insert immediately before next
+        
+        // if not in illegal state
+        if (iterator->current != NULL)
+        {
+            // set previous to point to the node before next
+            iterator->previous = iterator->current;
+            iterator->current = NULL;       // set to illegal state
+        }
+        
+        if (iterator->previous == NULL)
+        {
+            iterator->list->head = newNode;  // insert at the front of the list
+        }
+        else
+        {
+            iterator->previous->next = newNode;
+        }
+        
+        // set previous to point to the node before next
+        iterator->previous = newNode;
+        
+        iterator->list->size++;
+        added = true;
+    }
+    
+    return added;
+}
+
+
+/*
  * Remove the element that was last returned by a call to listiterator_next().
  *
- * This call can only be made once after a call to next().
+ * This call can only be made once per call to listiterator_next(), and it 
+ * can only be made if listiterator_add() has not been called after the last
+ * call to listiterator_next().
  *
  * params:
  * iterator: the iterator to remove the last returned element from
@@ -105,20 +164,44 @@ void listiterator_remove(ListIterator *iterator)
     listiterator_check_null(iterator, "listiterator_remove");
     listiterator_check_state(iterator, "listiterator_remove");
     
-    Node *remove = iterator->current;
+    Node *removedNode = iterator->current;
     
+    // if removing the first node of the list
     if (iterator->previous == NULL)
     {
-        iterator->list->head = remove->next;    // new first node of the list
+        iterator->list->head = removedNode->next;    // new first node of the list
     }
     else
     {
-        iterator->previous->next = remove->next;
+        iterator->previous->next = removedNode->next;
     }
     
-    free(remove);
-    iterator->current = NULL;
+    free(removedNode);
+    iterator->current = NULL;       // set to illegal state
     iterator->list->size--;
+}
+
+
+/*
+ * Replace the element last returned by listiterator_has_next() with
+ * the specified element.
+ *
+ * This function can only be called if neither listiterator_add()
+ * or listiterator_remove() have been called after the last call
+ * to listiterator_next().
+ *
+ * params:
+ * iterator: the iterator to replace an element in
+ * element: the new element
+ *
+ * returns: N/A
+ */
+void listiterator_set(ListIterator *iterator, element_t element)
+{
+    listiterator_check_null(iterator, "listiterator_set");
+    listiterator_check_state(iterator, "listiterator_set");
+    
+    iterator->current->data = element;
 }
 
 
